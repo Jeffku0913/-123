@@ -29,12 +29,17 @@
         renderer.setSize(window.innerWidth * 0.9, 500);
         document.getElementById('model-container').appendChild(renderer.domElement);
 
-        // 添加光源
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+        // 添加光源（提高亮度）
+        const ambientLight = new THREE.AmbientLight(0xffffff, 2.5); // 增強環境光亮度
         scene.add(ambientLight);
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
-        directionalLight.position.set(1, 1, 1).normalize();
+        
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 3); // 增加方向光亮度
+        directionalLight.position.set(2, 2, 2).normalize();
         scene.add(directionalLight);
+        
+        const pointLight = new THREE.PointLight(0xffffff, 2, 100); // 增加點光源讓模型更明亮
+        pointLight.position.set(0, 3, 3);
+        scene.add(pointLight);
 
         // 添加 OrbitControls
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -68,3 +73,4 @@
     </script>
 </body>
 </html>
+
