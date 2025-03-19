@@ -1,40 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Model Viewer</title>
+    <title>我的網站</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/GLTFLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three/examples/js/controls/OrbitControls.js"></script>
     <style>
-        body { margin: 0; overflow: hidden; }
-        canvas { display: block; }
+        body { margin: 0; font-family: Arial, sans-serif; }
+        .container { width: 90%; max-width: 1200px; margin: auto; text-align: center; padding: 20px; }
+        #model-container { width: 100%; height: 500px; background-color: #202020; margin-top: 20px; }
+        .description { margin-top: 20px; font-size: 18px; }
     </style>
 </head>
 <body>
+    <div class="container">
+        <h2>我的網站</h2>
+        <p class="description">這是一個包含 3D 模型的網站，你可以在這裡加入更多內容。</p>
+        <div id="model-container"></div>
+    </div>
+    
     <script>
-        // 初始化場景
+        // 初始化 3D 場景
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+        renderer.setSize(window.innerWidth * 0.9, 500);
+        document.getElementById('model-container').appendChild(renderer.domElement);
 
         // 添加光源
-        const light = new THREE.DirectionalLight(0xffffff, 1);
-        light.position.set(1, 1, 1).normalize();
-        scene.add(light);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+        directionalLight.position.set(1, 1, 1).normalize();
+        scene.add(directionalLight);
 
-        // 添加 OrbitControls 讓模型可以旋轉、縮放
+        // 添加 OrbitControls
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true; // 讓旋轉平滑
+        controls.enableDamping = true;
         controls.dampingFactor = 0.05;
         controls.screenSpacePanning = false;
         controls.minDistance = 2;
         controls.maxDistance = 10;
 
-        // 載入 GLB 模型
+        // 載入 3D 模型
         const loader = new THREE.GLTFLoader();
         loader.load('111213073_LOD0.glb', function(gltf) {
             const model = gltf.scene;
@@ -48,20 +58,13 @@
         // 設定相機位置
         camera.position.set(0, 1, 5);
 
-        // 繪製動畫
+        // 動畫渲染
         function animate() {
             requestAnimationFrame(animate);
-            controls.update(); // 更新控制器
+            controls.update();
             renderer.render(scene, camera);
         }
         animate();
-
-        // 調整視窗大小時更新相機和渲染器
-        window.addEventListener('resize', function() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
     </script>
 </body>
 </html>
