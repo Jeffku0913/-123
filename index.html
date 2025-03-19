@@ -26,20 +26,29 @@
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.shadowMap.enabled = true; // 啟用陰影
         renderer.setSize(window.innerWidth * 0.9, 500);
         document.getElementById('model-container').appendChild(renderer.domElement);
 
-        // 添加光源（提高亮度）
-        const ambientLight = new THREE.AmbientLight(0xffffff, 2.5); // 增強環境光亮度
+        // 添加光源（降低環境光，但增加柔和陰影效果）
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.5); // 降低環境光亮度
         scene.add(ambientLight);
         
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 3); // 增加方向光亮度
-        directionalLight.position.set(2, 2, 2).normalize();
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 2.5); // 增加方向光亮度
+        directionalLight.position.set(3, 3, 3);
+        directionalLight.castShadow = true; // 讓方向光投影
         scene.add(directionalLight);
         
-        const pointLight = new THREE.PointLight(0xffffff, 2, 100); // 增加點光源讓模型更明亮
-        pointLight.position.set(0, 3, 3);
+        const pointLight = new THREE.PointLight(0xffffff, 1.8, 100); // 調整點光源
+        pointLight.position.set(0, 3, 5);
+        pointLight.castShadow = true;
         scene.add(pointLight);
+
+        // 調整陰影品質
+        directionalLight.shadow.mapSize.width = 1024;
+        directionalLight.shadow.mapSize.height = 1024;
+        directionalLight.shadow.camera.near = 0.5;
+        directionalLight.shadow.camera.far = 50;
 
         // 添加 OrbitControls
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -56,6 +65,12 @@
             scene.add(model);
             model.position.set(0, -1, 0);
             model.scale.set(1, 1, 1);
+            model.traverse(function(node) {
+                if (node.isMesh) {
+                    node.castShadow = true;
+                    node.receiveShadow = true;
+                }
+            });
         }, undefined, function(error) {
             console.error('Error loading model:', error);
         });
