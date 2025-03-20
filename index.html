@@ -17,7 +17,7 @@
 <body>
     <div class="container">
         <h2>Jeff的網站</h2>
-        <p class="description">3D物件展示</p>
+        <p class="description"> 3D 模型展示。</p>
         <div id="model-container"></div>
     </div>
     
@@ -26,25 +26,24 @@
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.shadowMap.enabled = true; // 啟用陰影
+        renderer.shadowMap.enabled = true;
         renderer.setSize(window.innerWidth * 0.9, 500);
         document.getElementById('model-container').appendChild(renderer.domElement);
 
-        // 添加光源（降低環境光，但增加柔和陰影效果）
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1.5); // 降低環境光亮度
+        // 添加光源
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
         scene.add(ambientLight);
         
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 2.5); // 增加方向光亮度
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 2.5);
         directionalLight.position.set(3, 3, 3);
-        directionalLight.castShadow = true; // 讓方向光投影
+        directionalLight.castShadow = true;
         scene.add(directionalLight);
         
-        const pointLight = new THREE.PointLight(0xffffff, 1.8, 100); // 調整點光源
+        const pointLight = new THREE.PointLight(0xffffff, 1.8, 100);
         pointLight.position.set(0, 3, 5);
         pointLight.castShadow = true;
         scene.add(pointLight);
 
-        // 調整陰影品質
         directionalLight.shadow.mapSize.width = 1024;
         directionalLight.shadow.mapSize.height = 1024;
         directionalLight.shadow.camera.near = 0.5;
@@ -58,10 +57,11 @@
         controls.minDistance = 2;
         controls.maxDistance = 10;
 
-        // 載入 3D 模型
+        // 變數儲存 3D 模型
+        let model;
         const loader = new THREE.GLTFLoader();
         loader.load('111213073_LOD0.glb', function(gltf) {
-            const model = gltf.scene;
+            model = gltf.scene;
             scene.add(model);
             model.position.set(0, -1, 0);
             model.scale.set(1, 1, 1);
@@ -78,10 +78,13 @@
         // 設定相機位置
         camera.position.set(0, 1, 5);
 
-        // 動畫渲染
+        // 動畫渲染（自動旋轉）
         function animate() {
             requestAnimationFrame(animate);
             controls.update();
+            if (model) {
+                model.rotation.y += 0.005; // 讓模型慢慢旋轉
+            }
             renderer.render(scene, camera);
         }
         animate();
